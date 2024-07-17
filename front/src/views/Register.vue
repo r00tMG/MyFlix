@@ -50,7 +50,7 @@ export default {
             password : password.value
           })
         })
-        await router.push('/login')
+        await router.push('/')
     }
     return {
       name,

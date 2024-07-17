@@ -30,6 +30,8 @@ class FilmResource extends JsonResource
             'date_de_sortie' => $this->resource->date_de_sortie,
             'duree' => $this->resource->duree,
             'affiche' => $this->resource->affiche,
+            'film' => $this->resource->film,
+            'storage'=>asset('storage')
 
 
         ];

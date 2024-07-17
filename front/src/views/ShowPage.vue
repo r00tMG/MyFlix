@@ -3,7 +3,8 @@
 
     <div class="container w-75 p-5 m-auto">
       <div v-if="film" class="card m-5 text-bg-dark">
-        <img :src="film[0].affiche" class="card-img" alt="...">
+        <video :src="`http://localhost:8000/storage/${film[0].film}`" controls></video>
+<!--        <img :src="film[0].affiche" class="card-img" alt="...">-->
         <div class="card-img">
           <h5 class="card-title">Titre : {{film[0].titre}}</h5>
           <p class="card-text">Description : {{film[0].description}}</p>
@@ -30,7 +31,6 @@ export default {
   },
   setup(){
     const film = ref()
-    const router = useRouter()
     const route = useRoute()
     /*onMounted(async () => {
       try {
@@ -51,8 +51,15 @@ export default {
     });*/
     onMounted(async () => {
       try {
-        const response = await axios.get(`/films/${route.params.id}`);
+        const token = localStorage.getItem('token')
+        const response = await axios.get(`/films/${route.params.id}`,{
+          headers:{
+            'Content-Type':"application/json",
+            'Authorization':`Bearer ${token}`
+          }
+        });
         film.value = response.data;
+        console.log(film.value)
       } catch (error) {
         console.error('Failed to fetch film data:', error);
       }

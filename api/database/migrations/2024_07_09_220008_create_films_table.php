@@ -19,8 +19,9 @@ class CreateFilmsTable extends Migration
             $table->string('genre');
             $table->text('description')->nullable();
             $table->string('realisateur');
-            $table->date('date_de_sortie');
-            $table->integer('duree');
+            $table->string('date_de_sortie');
+            $table->string('duree');
+            $table->string('film')->nullable();
             $table->string('affiche')->nullable();
             $table->timestamps();
         });

@@ -1,49 +1,48 @@
 <template>
-    <Header/>
-    <div class="container-fluid my-5">
-      <div class="container w-75 my-5 m-auto">
-        <NavTab/>
-        <div class="d-flex my-5 justify-content-between">
-          <router-link to="/admin/create" class="btn btn-outline-primary">Create</router-link>
-
-          <h3 class="">Liste des films</h3>
-        </div>
-        <table class="table table-bordered table-responsive">
-          <thead>
-            <tr>
-              <th>Titre</th>
-              <th>Description</th>
-              <th>Affiche</th>
-              <th>Actions</th>
-
-            </tr>
-          </thead>
-          <tbody v-if="films">
-            <tr v-for="film in films.films" :key="film.id">
-              <td>{{film.titre}}</td>
-              <td>{{film.description}}</td>
-              <td><img :src="film.affiche" width="40px"></td>
-              <td>
-                <a class="btn btn-danger" @click="onDelete(film.id)">Delete</a>
-              </td>
-
-            </tr>
-          </tbody>
-        </table>
-
+  <Header/>
+  <div class="container-fluid my-5">
+    <div class="container w-75 my-5 m-auto">
+      <NavTab/>
+      <div class="d-flex my-5 justify-content-between">
+        <router-link to="/admin/create" class="btn btn-outline-primary">Create</router-link>
+        <h3 class="">Liste des films</h3>
       </div>
-
+      <table class="table table-bordered table-responsive">
+        <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Description</th>
+          <th>Réalisation</th>
+          <th>Film</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody >
+        <tr v-if="films" v-for="film in films" :key="film.id">
+          <td v-text="film.titre"></td>
+          <td v-text="film.description "></td>
+          <td v-text="film.realisateur"></td>
+          <td>
+            <video controls :src="film.film_url" width="100px"></video>
+          </td>
+          <td>
+            <button class="btn btn-danger me-2" @click="onDelete(film.id)">Delete</button>
+            <router-link :to="`/admin/${film.id}/edit`" class="btn btn-success">Edit</router-link>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
-    <Footer/>
+  </div>
+  <Footer/>
 </template>
 
-<script lang="ts">
+<script>
 import NavTab from "@/components/NavTab.vue";
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
-import {onMounted, ref} from "vue";
-
-import {Films} from "@/interfaces/films";
+import { onMounted, ref } from "vue";
+import axios from "@/axios.js";
 
 export default {
   name: "Admin",
@@ -52,37 +51,45 @@ export default {
     Header,
     Footer
   },
+  setup() {
+    const films = ref([]);
 
-  setup(){
     onMounted(async () => {
-      const r = await fetch('http://localhost:8000/api/films')
-      films.value = await r.json()
-      //console.log(films.value.films)
+      const token = localStorage.getItem('token');
+      const response = await axios.get('/films', {
+        headers: {
+          'Content-Type' : 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      films.value = response.data.films.map(film => ({
+        ...film,
+        affiche_url: `http://localhost:8000/storage/${film.affiche}`,
+        film_url: `http://localhost:8000/storage/${film.film}`
+      }));
 
-    })
+
+    });
 
     const onDelete = async (id) => {
-      if(confirm('Êtes-vous sûre de vouloir supprimé ce produit')) {
-        await fetch(`http://localhost:8000/api/films/${id}`, {
-          method: 'DELETE',
-        })
-        films.value = films.value.films.filter((f: Films)=>f.id!==id)
-        //console.log(films.value)
-
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce film ?')) {
+        const token = localStorage.getItem('token');
+        await axios.delete(`/films/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        films.value = films.value.filter(film => film.id !== id);
       }
-    }
+    };
 
-    const films = ref([])
-
-    return{
+    return {
       films,
-      onDelete
-    }
+      onDelete,
+    };
   }
-
-}
+};
 </script>
 
 <style scoped>
-
 </style>

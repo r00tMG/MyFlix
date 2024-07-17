@@ -12,8 +12,11 @@
         <div class="location" id="home" >
           <h1 id="home" >Popular on MyFlix</h1>
           <div  class="row">
-            <div v-for="film in films.films" :key="film.id" class="col-md-1 m-1 box">
-              <router-link :to="`/show/${film.titre}-${film.id}`" ><img :src="film.affiche" alt=""></router-link>
+            <div v-for="film in films.films" :key="film.id" class="col-md-1 m-5 box">
+              <router-link :to="`/show/${film.titre}-${film.id}`" >
+                <video :src="`http://localhost:8000/storage/${film.film}`" width="200px" height="200px"></video>
+<!--                <img :src="film.affiche" alt="">-->
+              </router-link>
             </div>
           </div>
         </div>
@@ -30,6 +33,7 @@
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import {onMounted, ref} from "vue";
+import axios from "@/axios.js";
 
 export default {
   name: "Home",
@@ -38,9 +42,17 @@ export default {
     const films = ref([])
 
     onMounted(async ()=>{
-      const r = await fetch('http://localhost:8000/api/films')
+      const token = localStorage.getItem('token')
+      const r = await axios.get('/films',{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization' : `Bearer ${token}`
+        },
+
+      })
       //console.log(await r.json())
-      films.value = await r.json()
+      films.value = await r.data
+      console.log(films.value)
     })
     return {
       films

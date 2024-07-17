@@ -36,7 +36,8 @@ class FilmFormRequest extends FormRequest
             'description' => ['required','string','min:3'],
             'realisateur' => ['required','string','min:3'],
             'date_de_sortie' => ['required','string'],
-            'duree' => ['required','integer','min:3'],
+            'duree' => ['required','string'],
+            'film' => ['require','string'],
             'affiche' => ['required','string','min:3'],
 
 

@@ -21,8 +21,8 @@ Route::post('login',[\App\Http\Controllers\Api\AuthController::class,'login'])->
 #Routes protected
 
 
-    Route::resource('films',\App\Http\Controllers\FilmController::class);
 Route::group(['middleware' => ['auth:sanctum']],function (){
+    Route::resource('films',\App\Http\Controllers\FilmController::class);
     Route::post('logout',[\App\Http\Controllers\Api\AuthController::class,'logout'])->name('logout');
     Route::resource('users',\App\Http\Controllers\Api\AuthController::class);
     Route::resource('roles',\App\Http\Controllers\RoleController::class);

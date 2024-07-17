@@ -1,25 +1,26 @@
 <script>
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import {onMounted, ref} from "vue";
+import {useRoute, useRouter} from "vue-router";
 import axios from "axios";
 import Router from "@/router/index.js";
 
 export default {
-  name: "CreateFilms",
+  name: "EditFilms",
   components: { Footer, Header },
   setup() {
-    const titre = ref('azerty');
-    const genre = ref('azerty');
-    const description = ref('azerty');
-    const realisateur = ref('azerty');
+    const titre = ref('');
+    const genre = ref('');
+    const description = ref('');
+    const realisateur = ref('');
     const date_de_sortie = ref('');
-    const duree = ref('123')
+    const duree = ref('')
     const affiche = ref(null);
     const film = ref(null)
 
     const router = useRouter();
+    const route = useRoute()
 
     const onFilmChange = (event) => {
       film.value = event.target.files[0]
@@ -29,6 +30,26 @@ export default {
       affiche.value = event.target.files[0];
       console.log(affiche.value)
     };
+    onMounted( async () => {
+      const token = localStorage.getItem('token')
+      const r = await axios.get(`http://localhost:8000/api/films/${route.params.id}`,{
+        headers:{
+          'Authorization':`Bearer ${token}`
+        }
+      })
+      const film = await r.data
+      console.log(film)
+      titre.value = film[0].titre
+      genre.value = film[0].genre
+      description.value = film[0].description
+      realisateur.value = film[0].realisateur
+      date_de_sortie.value = film[0].date_de_sortie
+      duree.value = film[0].duree
+      film.value = film[0].film
+      affiche.value = film[0].affiche
+
+
+    })
 
     const onSubmit = async () => {
       const formData = new FormData();
@@ -51,16 +72,16 @@ export default {
 
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.post('http://localhost:8000/api/films', formData, {
+        const response = await axios.put(`http://localhost:8000/api/films/${route.params.id}`, formData, {
+          method:'PUT',
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type':'application/json',
             'Authorization': `Bearer ${token}`
           }
         });
 
         console.log(response.data);
         //const r = response.data
-        //console.log(r[0])
         await router.push('/admin');
 
       } catch (error) {
@@ -78,8 +99,8 @@ export default {
       duree,
       affiche,
       film,
-      onFilmChange,
       onAfficheChange,
+      onFilmChange,
       onSubmit,
 
     };
@@ -113,10 +134,10 @@ export default {
         <input class="form-control" type="number" v-model="duree" name="duree" placeholder="Durée en minutes" >
       </div>
       <div class="form-group mb-3">
-        <input class="form-control" type="file" @change="onFilmChange" name="film" placeholder="Réalisateur" >
+        <input class="form-control" type="file" @change="onFilmChange" name="film" >
       </div>
       <div class="form-group mb-3">
-        <input class="form-control btn btn-primary" type="submit" value="Save" >
+        <input class="form-control btn btn-primary" type="submit" value="Modifier" >
       </div>
     </form>
   </div>
