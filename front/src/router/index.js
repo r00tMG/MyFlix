@@ -6,6 +6,7 @@ import Register from "@/views/Register.vue";
 import Admin from "@/views/admin/Admin.vue";
 import CreateFilms from "@/views/admin/CreateFilms.vue";
 import EditFilms from "@/views/admin/EditFilms.vue";
+import Favory from "@/views/Favory.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,6 +48,11 @@ const router = createRouter({
       path: '/admin/:id/edit',
       name: 'edit',
       component: EditFilms
+    },
+    {
+      path: '/favory',
+      name: 'favory',
+      component: Favory
     }
 
 

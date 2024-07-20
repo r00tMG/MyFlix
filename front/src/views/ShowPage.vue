@@ -3,12 +3,34 @@
 
     <div class="container w-75 p-5 m-auto">
       <div v-if="film" class="card m-5 text-bg-dark">
-        <video :src="`http://localhost:8000/storage/${film[0].film}`" controls></video>
+        <video :src="film.storage+ '/' + film[0].film" controls></video>
 <!--        <img :src="film[0].affiche" class="card-img" alt="...">-->
         <div class="card-img">
           <h5 class="card-title">Titre : {{film[0].titre}}</h5>
+          <button class="btn btn-primary" @click="addToFavorites(film[0].id)">Add To Favory</button>
           <p class="card-text">Description : {{film[0].description}}</p>
           <p class="card-text">Date de Sortie : <small>{{film[0].date_de_sortie}}</small></p>
+        </div>
+        <div class="w-50 m-auto">
+          <h3 class="text-center my-5">Commentaires et notes</h3>
+          <div v-for="rating in ratings[0]" :key="rating.id">
+            <p><strong>{{ rating.user.name }}</strong> ({{ rating.rating }}/5)</p>
+            <p>{{ rating.comment }}</p>
+          </div>
+           <form @submit.prevent="submitRating">
+             <div class="form-group mb-2">
+                <input v-model="film_id" name="film_id" class="form-control" type="number" hidden required />
+             </div>
+             <div class="form-group mb-2">
+                <input v-model="rating" type="number" name="rating" class="form-control" min="1" max="5" placeholder="Note (1-5)" required />
+             </div>
+             <div class="form-group mb-2">
+                <textarea v-model="comment" name="comment" class="form-control" placeholder="Commentaire"></textarea>
+             </div>
+             <div class="form-group text-center">
+                <button class="btn btn-primary" >Soumettre</button>
+             </div>
+          </form>
         </div>
       </div>
     </div>
@@ -22,9 +44,11 @@ import Footer from "@/components/Footer.vue";
 import {onMounted, ref} from "vue";
 import {useRouter, useRoute} from "vue-router";
 import axios from "@/axios.js";
+import {addFavorite} from "@/services/favoriteService.js";
 
 export default {
   name: "ShowPage",
+  methods: {addFavorite},
   components: {
     Footer,
     Header
@@ -32,23 +56,12 @@ export default {
   setup(){
     const film = ref()
     const route = useRoute()
-    /*onMounted(async () => {
-      try {
-        const r = await fetch(`http://localhost:8000/api/films/${route.params.id}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (!r.ok) {
-          throw new Error(`HTTP error! status: ${r.status}`);
-        }
-
-        film.value = await r.json();
-
-      } catch (error) {
-        console.error('Failed to fetch film data:', error);
-      }
-    });*/
+    const storage = ref('')
+    const ratings = ref([])
+    const film_id = ref(route.params.id)
+    const rating = ref('')
+    const comment = ref('')
+    console.log(film_id.value, rating.value, comment.value)
     onMounted(async () => {
       try {
         const token = localStorage.getItem('token')
@@ -59,14 +72,59 @@ export default {
           }
         });
         film.value = response.data;
-        console.log(film.value)
+        //console.log(film.value.storage)
+        const storage = film.value.storage
+        //console.log(storage)
       } catch (error) {
         console.error('Failed to fetch film data:', error);
       }
+
     });
+    const fetchRatings = async () => {
+      const token = localStorage.getItem('token');
+      const r = await axios.get(`http://localhost:8000/api/films/${route.params.id}/ratings`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      ratings.value = await r.data
+      //console.log(ratings.value[0][0])
+
+    }
+    onMounted(async ()=>{
+     await fetchRatings()
+    })
+    const submitRating = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        await axios.post('http://localhost:8000/api/ratings', {
+          film_id: film_id.value,
+          rating: rating.value,
+          comment: comment.value
+        }, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        await fetchRatings();
+      } catch (error) {
+        console.error('Erreur lors de la soumission de la notation:', error);
+        alert('Une erreur est survenue lors de la soumission de la notation');
+      }
+    };
+
+    //console.log(submitRating)
+    const addToFavorites = async (id) => {
+      await addFavorite(id)
+      alert('Ce film a été ajouté à votre liste des favories')
+    }
 
     return{
-      film
+      film,
+      storage,
+      addToFavorites,
+      ratings,
+      film_id,
+      rating,
+      comment,
+      submitRating,
+
     }
   }
 }

@@ -85,6 +85,7 @@ class FilmController extends Controller
         return \response()->json([
             'error' => false,
             'message' => "Votre requête a bien réussie",
+            'storage' => asset('storage'),
             $film
         ],
             Response::HTTP_OK

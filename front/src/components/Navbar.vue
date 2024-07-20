@@ -1,11 +1,11 @@
 <template>
   <nav class="main-nav">
     <router-link to="/home" >Home</router-link>
-    <a href="#tvShows">TV Shows</a>
-    <a href="#movies">Movies</a>
-    <a href="#originals">Originals</a>
+    <router-link to="/favory" href="#tvShows">Favory</router-link>
+    <router-link to="/admin" href="/admin">Admin</router-link>
+<!--    <a href="#movies">Movies</a>
     <a href="#">Recently Added</a>
-    <a target="_blank" href="https://codepen.io/cb2307/full/NzaOrm">Portfolio</a>
+    <a target="_blank" href="https://codepen.io/cb2307/full/NzaOrm">Portfolio</a>-->
   </nav>
   <nav class="sub-nav">
     <a href="#"><i class="fas fa-search sub-nav-logo"></i></a>

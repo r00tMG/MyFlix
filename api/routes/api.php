@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RatingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,9 @@ Route::post('login',[\App\Http\Controllers\Api\AuthController::class,'login'])->
 
 
 Route::group(['middleware' => ['auth:sanctum']],function (){
+    Route::apiResource('ratings',RatingController::class);
+    Route::get('/films/{film}/ratings', [RatingController::class, 'index']);
+    Route::apiResource('favorites',\App\Http\Controllers\FavoriteController::class)->except('create','show','edit','update');
     Route::resource('films',\App\Http\Controllers\FilmController::class);
     Route::post('logout',[\App\Http\Controllers\Api\AuthController::class,'logout'])->name('logout');
     Route::resource('users',\App\Http\Controllers\Api\AuthController::class);

@@ -6,6 +6,9 @@
     <!-- HEADER -->
       <Header/>
     <!-- END OF HEADER -->
+    <div class="container w-25 m-auto my-5">
+      <input type="text" class="form-control" v-model="query" @keyup="onSearch"/>
+    </div>
 
     <!-- MAIN CONTAINER -->
       <section class="main-container" >
@@ -40,6 +43,7 @@ export default {
   components: {Footer, Header},
   setup(){
     const films = ref([])
+    const query = ref('')
 
     onMounted(async ()=>{
       const token = localStorage.getItem('token')
@@ -52,10 +56,14 @@ export default {
       })
       //console.log(await r.json())
       films.value = await r.data
-      console.log(films.value)
+      //console.log(films.value)
     })
+    const onSearch = (e) => {
+      console.log('On search',e.target)
+    }
     return {
-      films
+      films,
+      query
     }
   }
 

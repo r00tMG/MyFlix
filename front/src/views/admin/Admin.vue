@@ -13,6 +13,7 @@
           <th>Titre</th>
           <th>Description</th>
           <th>Réalisation</th>
+          <th>Affiche</th>
           <th>Film</th>
           <th>Actions</th>
         </tr>
@@ -23,7 +24,10 @@
           <td v-text="film.description "></td>
           <td v-text="film.realisateur"></td>
           <td>
-            <video controls :src="film.film_url" width="100px"></video>
+            <img :src="film.storage + '/' + film.affiche" width="60px">
+          </td>
+          <td>
+            <video controls :src="film.storage + '/' + film.film" width="100px"></video>
           </td>
           <td>
             <button class="btn btn-danger me-2" @click="onDelete(film.id)">Delete</button>
@@ -62,11 +66,13 @@ export default {
           'Authorization': `Bearer ${token}`
         }
       });
-      films.value = response.data.films.map(film => ({
+      /*films.value = response.data.films.map(film => ({
         ...film,
         affiche_url: `http://localhost:8000/storage/${film.affiche}`,
-        film_url: `http://localhost:8000/storage/${film.film}`
-      }));
+        film_url: film.storage + film.film
+      }));*/
+      films.value = response.data.films
+      console.log(films.value)
 
 
     });
