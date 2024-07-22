@@ -22,7 +22,7 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         $roles = Role::orderBy('id','DESC')->limit(100)->get();
-        return response($roles);
+        #return response($roles);
         return view('roles.index',compact('roles'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -42,18 +42,18 @@ class RoleController extends Controller
     {
         request()->validate([
             'name' => 'required|unique:roles,name',
-            'permission' => 'required',
+            #'permission' => 'required',
         ]);
 
         $role = Role::create(['name' => $request->input('name')]);
 
-        $permissions = [];
+        /*$permissions = [];
         $post_permissions = $request->input('permission');
         foreach ($post_permissions as $key => $val) {
             $permissions[intval($val)] = intval($val);
         }
-        $role->syncPermissions($permissions);
-        return response($role,201);
+        $role->syncPermissions($permissions);*/
+        #return response($role,201);
 
         return redirect()->route('roles.index')->with('success','Role created successfully');
     }
@@ -67,7 +67,7 @@ class RoleController extends Controller
         $rolePermissions = Permission::join("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
             ->where("role_has_permissions.role_id",$id)
             ->get();
-        return response([$role,$rolePermissions],200);
+        #return response([$role,$rolePermissions],200);
 
         return view('roles.show',compact('role','rolePermissions'));
     }
@@ -116,9 +116,9 @@ class RoleController extends Controller
     public function destroy(string $id)
     {
         DB::table("roles")->where('id',$id)->delete();
-        return response([
+        /*return response([
             "message"=>"role supprimé",
-        ],204);
+        ],204);*/
         return redirect()->route('roles.index')->with('success','Role deleted successfully');
     }
 }

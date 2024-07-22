@@ -97,11 +97,13 @@ class AuthController extends Controller
             }
 
             $user = User::where('email', $request->email)->first();
-
+            $roles = $user->getRoleNames();
+            #dd($roles);
             return response()->json([
                 'status' => true,
                 'message' => 'User Logged In Successfully',
                 'token' => $user->createToken("API TOKEN")->plainTextToken,
+                'role' => $roles,
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->name,

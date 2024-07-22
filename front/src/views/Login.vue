@@ -18,10 +18,11 @@ export default {
         })
       })
       const data = await r.json()
-        console.log(data.token)
+        console.log(data.role)
       if(data.token)
       {
         localStorage.setItem('token',data.token)
+        localStorage.setItem('role',data.role)
         await router.push('/home')
       }else {
         alert('Authentification échoué')

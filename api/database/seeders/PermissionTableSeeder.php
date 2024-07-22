@@ -26,7 +26,8 @@ class PermissionTableSeeder extends Seeder
             'film-list',
             'film-create',
             'film-edit',
-            'film-delete'
+            'film-delete',
+            'super-admin'
         ];
 
         foreach ($permissions as $permission) {

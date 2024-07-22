@@ -6,18 +6,19 @@
     <!-- HEADER -->
       <Header/>
     <!-- END OF HEADER -->
-    <div class="container w-25 m-auto my-5">
-      <input type="text" class="form-control" v-model="query" @keyup="onSearch"/>
-    </div>
+
 
     <!-- MAIN CONTAINER -->
       <section class="main-container" >
+        <div class="container w-25 m-auto mt-5">
+          <input type="text" class="form-control" v-model="query" placeholder="Rechercher..." @click="onSearch"/>
+        </div>
         <div class="location" id="home" >
           <h1 id="home" >Popular on MyFlix</h1>
           <div  class="row">
             <div v-for="film in films.films" :key="film.id" class="col-md-1 m-5 box">
               <router-link :to="`/show/${film.titre}-${film.id}`" >
-                <video :src="`http://localhost:8000/storage/${film.film}`" width="200px" height="200px"></video>
+                <video :src="`${film.storage}/${film.film}`" width="200px" height="200px"></video>
 <!--                <img :src="film.affiche" alt="">-->
               </router-link>
             </div>
@@ -45,6 +46,7 @@ export default {
     const films = ref([])
     const query = ref('')
 
+
     onMounted(async ()=>{
       const token = localStorage.getItem('token')
       const r = await axios.get('/films',{
@@ -56,14 +58,18 @@ export default {
       })
       //console.log(await r.json())
       films.value = await r.data
-      //console.log(films.value)
+
+      console.log(films.value)
     })
+
     const onSearch = (e) => {
       console.log('On search',e.target)
     }
     return {
       films,
-      query
+      query,
+      onSearch
+
     }
   }
 

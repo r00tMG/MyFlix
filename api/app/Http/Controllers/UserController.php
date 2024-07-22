@@ -26,7 +26,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $data = User::orderBy('id','DESC')->paginate(1000);
-        return response()->json(UserResource::collection($data));
+        #return response()->json(UserResource::collection($data));
         return view('users.index',compact('data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -61,10 +61,10 @@ class UserController extends Controller
         #dd($user);
         $user->assignRole($request->input('roles'));
 
-        return response()->json(
+        /*return response()->json(
                 $user,
             Response::HTTP_CREATED
-        );
+        );*/
         return redirect()->route('users.index')->with('success','User created successfully');
     }
 
@@ -75,10 +75,10 @@ class UserController extends Controller
     {
         $user = User::find($id);
         #dd($user);
-        return response()->json(
+        /*return response()->json(
             $user,
             Response::HTTP_OK
-        );
+        );*/
         return view('users.show',compact('user'));
     }
 
@@ -90,10 +90,10 @@ class UserController extends Controller
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
-        return response()->json(
+        /*return response()->json(
             UserResource::collection($roles),
             Response::HTTP_OK
-        );
+        );*/
         return view('users.edit',compact('user','roles','userRole'));
     }
 
